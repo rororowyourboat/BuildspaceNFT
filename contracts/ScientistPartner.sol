@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 
-// We need to import the helper functions from the contract that we copy/pasted.
 import { Base64 } from "./libraries/Base64.sol";
 
 contract MyEpicNFT is ERC721URIStorage {
@@ -16,7 +15,6 @@ contract MyEpicNFT is ERC721URIStorage {
 
   string[] firstWords = ["Einstein", "Gauss", "Euler", "Lagrange", "Newton", "Bernoulli", "Aryabhatta", "Turing","Bohr","Heisenberg","Noether","Curie"];
   string[] secondWords = ["Math","Hockey","Basketball","Chess","Singing","Dance","Football","TableTennis", "Jumprope"];
-  // string[] thirdWords = [""];
 
 
   constructor() ERC721 ("ScientistPartnerNFT", "SCIE") {
@@ -35,12 +33,7 @@ contract MyEpicNFT is ERC721URIStorage {
     return secondWords[rand];
   }
 
-  // function pickRandomThirdWord(uint256 tokenId) public view returns (string memory) {
-  //   uint256 rand = random(string(abi.encodePacked("THIRD_WORD", Strings.toString(tokenId))));
-  //   rand = rand % thirdWords.length;
-  //   return thirdWords[rand];
-  // }
-
+  
   function random(string memory input) internal pure returns (uint256) {
       return uint256(keccak256(abi.encodePacked(input)));
   }
@@ -50,21 +43,17 @@ contract MyEpicNFT is ERC721URIStorage {
 
     string memory first = pickRandomFirstWord(newItemId);
     string memory second = pickRandomSecondWord(newItemId);
-    // string memory third = pickRandomThirdWord(newItemId);
     string memory combinedWord = string(abi.encodePacked(first, second));
 
     string memory finalSvg = string(abi.encodePacked(baseSvg, combinedWord, "</text></svg>"));
 
-    // Get all the JSON metadata in place and base64 encode it.
     string memory json = Base64.encode(
         bytes(
             string(
                 abi.encodePacked(
                     '{"name": "',
-                    // We set the title of our NFT as the generated word.
                     combinedWord,
                     '", "description": "First word is your murder motive, Second is your location and third is the weapon of choice", "image": "data:image/svg+xml;base64,',
-                    // We add data:image/svg+xml;base64 and then append our base64 encode our svg.
                     Base64.encode(bytes(finalSvg)),
                     '"}'
                 )
@@ -72,7 +61,6 @@ contract MyEpicNFT is ERC721URIStorage {
         )
     );
 
-    // Just like before, we prepend data:application/json;base64, to our data.
     string memory finalTokenUri = string(
         abi.encodePacked("data:application/json;base64,", json)
     );
@@ -83,7 +71,6 @@ contract MyEpicNFT is ERC721URIStorage {
 
     _safeMint(msg.sender, newItemId);
     
-    // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
   
     _tokenIds.increment();
